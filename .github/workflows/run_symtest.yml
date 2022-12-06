@@ -1,0 +1,31 @@
+name: ERC721A CI - symtest
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - 'docs/**'
+      - '**.md'
+  pull_request:
+    branches: [main]
+    paths-ignore:
+      - 'docs/**'
+      - '**.md'
+
+jobs:
+  run-symtest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node.js 16.x
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16.x
+      - name: Install dependencies
+        run: npm ci
+      - name: Run symtest
+        run: |
+          python3 -m pip install --upgrade symtest
+          sed -i 's/\bprivate\b/internal/g' contracts/ERC721A.sol
+          cp spec/ERC721A.t.sol contracts/
+          grep 'function test_' contracts/ERC721A.t.sol | cut -f 6 -d ' ' | cut -f 1 -d '(' | while read i; do echo $i; python -m symtest . ERC721ATest $i; done
