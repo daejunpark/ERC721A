@@ -149,6 +149,10 @@ contract ERC721ATest is ERC721A {
         address from = ownerOf(tokenId);
         uint oldBalanceFrom = balanceOf(from);
 
+        // TODO: prove global invariant
+        require(!(_packedOwnerships[tokenId] != 0) || tokenId < _nextTokenId());
+        require(!_exists(tokenId) || oldBalanceFrom > 0);
+
         burn(tokenId);
 
         uint newBalanceFrom = balanceOf(from);
@@ -255,6 +259,10 @@ contract ERC721ATest is ERC721A {
         uint oldBalanceTo   = balanceOf(to);
 
         require(oldBalanceTo <= type(uint64).max / 2); // practical assumption needed for balance staying within uint64
+
+        // TODO: prove global invariant
+        require(!(_packedOwnerships[tokenId] != 0) || tokenId < _nextTokenId());
+        require(!_exists(tokenId) || balanceOf(ownerOf(tokenId)) > 0);
 
         transfer(from, to, tokenId);
 
