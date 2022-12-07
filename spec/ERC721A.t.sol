@@ -38,8 +38,8 @@ contract ERC721ATest is ERC721A {
 
         uint newNextTokenId = _nextTokenId();
 
-        assert(newNextTokenId == oldNextTokenId + quantity);
         assert(newNextTokenId >= oldNextTokenId); // ensuring no overflow
+        assert(newNextTokenId == oldNextTokenId + quantity);
     }
 
     function test_mint_balance_update(address to, uint quantity) public {
@@ -50,8 +50,8 @@ contract ERC721ATest is ERC721A {
 
         uint newBalanceTo = balanceOf(to);
 
-        assert(newBalanceTo == oldBalanceTo + quantity);
         assert(newBalanceTo >= oldBalanceTo); // ensuring no overflow
+        assert(newBalanceTo == oldBalanceTo + quantity);
     }
 
     function test_mint_ownership_update(address to, uint quantity, uint _newNextTokenId) public {
@@ -153,8 +153,8 @@ contract ERC721ATest is ERC721A {
 
         uint newBalanceFrom = balanceOf(from);
 
-        assert(newBalanceFrom == oldBalanceFrom - 1);
         assert(newBalanceFrom < oldBalanceFrom); // ensuring no overflow
+        assert(newBalanceFrom == oldBalanceFrom - 1);
     }
 
     function test_burn_ownership_update(uint tokenId) public {
@@ -261,11 +261,11 @@ contract ERC721ATest is ERC721A {
         uint newBalanceFrom = balanceOf(from);
         uint newBalanceTo   = balanceOf(to);
 
-        assert(newBalanceFrom == oldBalanceFrom - 1);
         assert(newBalanceFrom < oldBalanceFrom);
+        assert(newBalanceFrom == oldBalanceFrom - 1);
 
-        assert(newBalanceTo == oldBalanceTo + 1);
         assert(newBalanceTo > oldBalanceTo);
+        assert(newBalanceTo == oldBalanceTo + 1);
     }
 
     function test_transfer_balance_unchanged(address from, address to, uint tokenId) public {
