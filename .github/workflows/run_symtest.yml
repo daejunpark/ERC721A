@@ -28,4 +28,4 @@ jobs:
           python3 -m pip install --upgrade symtest
           sed -i 's/\bprivate\b/internal/g' contracts/ERC721A.sol
           cp spec/ERC721A.t.sol contracts/
-          grep 'function test_' contracts/ERC721A.t.sol | cut -f 6 -d ' ' | cut -f 1 -d '(' | while read i; do echo $i; python -m symtest . ERC721ATest $i; done
+          python -m symtest .
