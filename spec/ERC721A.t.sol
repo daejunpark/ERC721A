@@ -23,14 +23,14 @@ contract ERC721ATest is ERC721A {
       //_safeMint(to, quantity, data);
     }
 
-    function spec_mint_requirements(address to, uint quantity) public {
+    function testMintRequirements(address to, uint quantity) public {
         mint(to, quantity);
 
         assert(to != address(0));
         assert(quantity > 0);
     }
 
-    function spec_mint_nextTokenId_update(address to, uint quantity) public {
+    function testMintNextTokenIdUpdate(address to, uint quantity) public {
         uint oldNextTokenId = _nextTokenId();
         require(oldNextTokenId <= type(uint96).max); // practical assumption needed for overflow/underflow not occurring
 
@@ -42,7 +42,7 @@ contract ERC721ATest is ERC721A {
         assert(newNextTokenId == oldNextTokenId + quantity);
     }
 
-    function spec_mint_balance_update(address to, uint quantity) public {
+    function testMintBalanceUpdate(address to, uint quantity) public {
         uint oldBalanceTo = balanceOf(to);
         require(oldBalanceTo <= type(uint64).max / 2); // practical assumption needed for balance staying within uint64
 
@@ -54,7 +54,7 @@ contract ERC721ATest is ERC721A {
         assert(newBalanceTo == oldBalanceTo + quantity);
     }
 
-    function spec_mint_ownership_update(address to, uint quantity, uint _newNextTokenId) public {
+    function testMintOwnershipUpdate(address to, uint quantity, uint _newNextTokenId) public {
         uint oldNextTokenId = _nextTokenId();
         require(oldNextTokenId <= type(uint96).max); // practical assumption needed for overflow/underflow not occurring
 
@@ -74,7 +74,7 @@ contract ERC721ATest is ERC721A {
         }
     }
 
-    function spec_mint_other_balance_preservation(address to, uint quantity, address others) public {
+    function testMintOtherBalancePreservation(address to, uint quantity, address others) public {
         require(others != to); // consider other addresses
 
         uint oldBalanceOther = balanceOf(others);
@@ -86,7 +86,7 @@ contract ERC721ATest is ERC721A {
         assert(newBalanceOther == oldBalanceOther); // the balance of other addresses never change
     }
 
-    function spec_mint_other_ownership_preservation(address to, uint quantity, uint existingTokenId) public {
+    function testMintOtherOwnershipPreservation(address to, uint quantity, uint existingTokenId) public {
         uint oldNextTokenId = _nextTokenId();
         require(oldNextTokenId <= type(uint96).max); // practical assumption needed for overflow/underflow not occurring
 
@@ -114,7 +114,7 @@ contract ERC721ATest is ERC721A {
         _burn(tokenId, false);
     }
 
-    function spec_burn_requirements(uint tokenId) public {
+    function testBurnRequirements(uint tokenId) public {
         // TODO: prove global invariant
         require(!(_packedOwnerships[tokenId] == 0) || !isBurned(tokenId));
         require(!(_packedOwnerships[tokenId] != 0) || tokenId < _nextTokenId());
@@ -135,7 +135,7 @@ contract ERC721ATest is ERC721A {
         assert(_tokenApprovals[tokenId].value == address(0)); // getApproved(tokenId) reverts here
     }
 
-    function spec_burn_nextTokenId_unchanged(uint tokenId) public {
+    function testBurnNextTokenIdUnchanged(uint tokenId) public {
         uint oldNextTokenId = _nextTokenId();
 
         burn(tokenId);
@@ -145,7 +145,7 @@ contract ERC721ATest is ERC721A {
         assert(newNextTokenId == oldNextTokenId);
     }
 
-    function spec_burn_balance_update(uint tokenId) public {
+    function testBurnBalanceUpdate(uint tokenId) public {
         address from = ownerOf(tokenId);
         uint oldBalanceFrom = balanceOf(from);
 
@@ -161,14 +161,14 @@ contract ERC721ATest is ERC721A {
         assert(newBalanceFrom == oldBalanceFrom - 1);
     }
 
-    function spec_burn_ownership_update(uint tokenId) public {
+    function testBurnOwnershipUpdate(uint tokenId) public {
         burn(tokenId);
 
         assert(!_exists(tokenId));
         assert(isBurned(tokenId));
     }
 
-    function spec_burn_other_balance_preservation(uint tokenId, address others) public {
+    function testBurnOtherBalancePreservation(uint tokenId, address others) public {
         address from = ownerOf(tokenId);
         require(others != from); // consider other addresses
 
@@ -181,7 +181,7 @@ contract ERC721ATest is ERC721A {
         assert(newBalanceOther == oldBalanceOther);
     }
 
-    function spec_burn_other_ownership_preservation(uint tokenId, uint otherTokenId) public {
+    function testBurnOtherOwnershipPreservation(uint tokenId, uint otherTokenId) public {
         require(_nextTokenId() <= type(uint96).max); // practical assumption needed for avoiding overflow/underflow
 
         // TODO: prove global invariant
@@ -217,7 +217,7 @@ contract ERC721ATest is ERC721A {
       //safeTransferFrom(from, to, tokenId, data);
     }
 
-    function spec_transfer_requirements(address from, address to, uint tokenId) public {
+    function testTransferRequirements(address from, address to, uint tokenId) public {
         // TODO: prove global invariant
         require(!(_packedOwnerships[tokenId] == 0) || !isBurned(tokenId));
         require(!(_packedOwnerships[tokenId] != 0) || tokenId < _nextTokenId());
@@ -242,7 +242,7 @@ contract ERC721ATest is ERC721A {
         assert(_tokenApprovals[tokenId].value == address(0));
     }
 
-    function spec_transfer_nextTokenId_unchanged(address from, address to, uint tokenId) public {
+    function testTransferNextTokenIdUnchanged(address from, address to, uint tokenId) public {
         uint oldNextTokenId = _nextTokenId();
 
         transfer(from, to, tokenId);
@@ -252,7 +252,7 @@ contract ERC721ATest is ERC721A {
         assert(newNextTokenId == oldNextTokenId);
     }
 
-    function spec_transfer_balance_update(address from, address to, uint tokenId) public {
+    function testTransferBalanceUpdate(address from, address to, uint tokenId) public {
         require(from != to); // consider normal transfer case (see below for the self-transfer case)
 
         uint oldBalanceFrom = balanceOf(from);
@@ -276,7 +276,7 @@ contract ERC721ATest is ERC721A {
         assert(newBalanceTo == oldBalanceTo + 1);
     }
 
-    function spec_transfer_balance_unchanged(address from, address to, uint tokenId) public {
+    function testTransfer_balance_unchanged(address from, address to, uint tokenId) public {
         require(from == to); // consider self-transfer case
 
         uint oldBalance = balanceOf(from); // == balanceOf(to);
@@ -288,14 +288,14 @@ contract ERC721ATest is ERC721A {
         assert(newBalance == oldBalance);
     }
 
-    function spec_transfer_ownership_update(address from, address to, uint tokenId) public {
+    function testTransferOwnershipUpdate(address from, address to, uint tokenId) public {
         transfer(from, to, tokenId);
 
         assert(ownerOf(tokenId) == to);
         assert(!isBurned(tokenId));
     }
 
-    function spec_transfer_other_balance_preservation(address from, address to, uint tokenId, address others) public {
+    function testTransferOtherBalancePreservation(address from, address to, uint tokenId, address others) public {
         require(others != from); // consider other addresses
         require(others != to);
 
@@ -308,7 +308,7 @@ contract ERC721ATest is ERC721A {
         assert(newBalanceOther == oldBalanceOther);
     }
 
-    function spec_transfer_other_ownership_preservation(address from, address to, uint tokenId, uint otherTokenId) public {
+    function testTransferOtherOwnershipPreservation(address from, address to, uint tokenId, uint otherTokenId) public {
         require(_nextTokenId() <= type(uint96).max); // practical assumption needed for avoiding overflow/underflow
 
         // TODO: prove global invariant
