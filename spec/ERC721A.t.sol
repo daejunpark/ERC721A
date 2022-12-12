@@ -276,7 +276,7 @@ contract ERC721ATest is ERC721A {
         assert(newBalanceTo == oldBalanceTo + 1);
     }
 
-    function testTransfer_balance_unchanged(address from, address to, uint tokenId) public {
+    function testTransferBalanceUnchanged(address from, address to, uint tokenId) public {
         require(from == to); // consider self-transfer case
 
         uint oldBalance = balanceOf(from); // == balanceOf(to);
