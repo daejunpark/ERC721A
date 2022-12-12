@@ -38,7 +38,7 @@ contract ERC721ATest is ERC721A {
 
         uint newNextTokenId = _nextTokenId();
 
-        assert(newNextTokenId >= oldNextTokenId); // ensuring no overflow
+        assert(newNextTokenId > oldNextTokenId); // ensuring no overflow
         assert(newNextTokenId == oldNextTokenId + quantity);
     }
 

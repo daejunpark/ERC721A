@@ -28,4 +28,4 @@ jobs:
           python3 -m pip install --upgrade symtest
           sed -i 's/\bprivate\b/internal/g' contracts/ERC721A.sol
           cp spec/ERC721A.t.sol contracts/
-          symtest
+          symtest --function testMint
